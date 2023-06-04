@@ -1,5 +1,6 @@
 package com.jdz.biblioteka.service.impl;
 
+import com.jdz.biblioteka.exception.ResourceNotFoundException;
 import com.jdz.biblioteka.model.Book;
 import com.jdz.biblioteka.payload.BookDto;
 import com.jdz.biblioteka.repository.BookRepository;
@@ -19,7 +20,8 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto createBook(BookDto bookDto) {
         Book book = bookMapper.map(bookDto);
-        book.setCategory(categoryRepository.findCategoryByName(bookDto.getCategory()));
+        book.setCategory(categoryRepository
+                .findCategoryByName(bookDto.getCategory()));
 
         Book newBook = bookRepository.save(book);
         return bookMapper.map(newBook);
@@ -27,7 +29,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto getBookById(int id) {
-        Book book = bookRepository.findById(id).orElseThrow();
+        Book book = bookRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
         return bookMapper.map(book);
     }
 
