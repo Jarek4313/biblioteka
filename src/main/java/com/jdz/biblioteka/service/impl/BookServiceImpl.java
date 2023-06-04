@@ -3,12 +3,20 @@ package com.jdz.biblioteka.service.impl;
 import com.jdz.biblioteka.exception.ResourceNotFoundException;
 import com.jdz.biblioteka.model.Book;
 import com.jdz.biblioteka.payload.BookDto;
+import com.jdz.biblioteka.payload.BookResponse;
 import com.jdz.biblioteka.repository.BookRepository;
 import com.jdz.biblioteka.repository.CategoryRepository;
 import com.jdz.biblioteka.service.BookService;
 import com.jdz.biblioteka.service.mapper.BookMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -33,6 +41,23 @@ public class BookServiceImpl implements BookService {
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
         return bookMapper.map(book);
+    }
+
+    @Override
+    public BookResponse getAllBooks(int pageNumber, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
+                Sort.by(sortBy).ascending() :
+                Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Book> books = bookRepository.findAllBooks(pageable);
+
+        List<Book> listOfBooks = books.getContent();
+        List<BookDto> content = listOfBooks.stream()
+                .map(bookMapper::map)
+                .toList(); //.collect(Collectors.toList());
+
+        return bookMapper.getResponse(content, books);
     }
 
 
