@@ -8,4 +8,5 @@ import lombok.Setter;
 public class BookDto {
     private String title;
     private Integer quantity;
+    private String category;
 }
