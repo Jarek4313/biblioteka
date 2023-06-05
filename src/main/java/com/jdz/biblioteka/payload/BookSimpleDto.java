@@ -5,11 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BookDto {
+public class BookSimpleDto {
     private String title;
-    private int quantity;
     private String category;
-    private int pageNumber;
-    private int publicationYear;
-    private String author;
 }

@@ -25,4 +25,14 @@ public class Book {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @Column(name="page_number", nullable = false)
+    private int pageNumber;
+
+    @Column(name="publication_year", nullable = false)
+    private int publicationYear;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
+    private Author author;
 }
