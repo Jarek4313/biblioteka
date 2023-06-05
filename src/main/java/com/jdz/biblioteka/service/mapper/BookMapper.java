@@ -29,6 +29,7 @@ public class BookMapper {
         if (Objects.isNull(book)) {
             return null;
         }
+
         BookDto bookDto = new BookDto();
 
         bookDto.setTitle(Objects.nonNull(book.getTitle()) ? book.getTitle() : "no title");
@@ -37,9 +38,14 @@ public class BookMapper {
                 categoryRepository.getReferenceById(book.getCategory().getId()).getName() : "");
         bookDto.setPageNumber(ObjectUtils.defaultIfNull(book.getPageNumber(), 0));
         bookDto.setPublicationYear(ObjectUtils.defaultIfNull(book.getPublicationYear(), 0));
+
         if (!Objects.isNull(book.getAuthor())) {
             bookDto.setAuthor("%s %s".formatted(book.getAuthor().getName(), book.getAuthor().getLastName()));
         }
+        if (!Objects.isNull(book.getPublishingHouse())) {
+            bookDto.setPublishingHouse("%s".formatted(book.getPublishingHouse().getName()));
+        }
+
         return bookDto;
     }
 

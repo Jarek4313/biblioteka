@@ -12,4 +12,5 @@ public class BookDto {
     private int pageNumber;
     private int publicationYear;
     private String author;
+    private String publishingHouse;
 }
