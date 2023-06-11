@@ -9,5 +9,6 @@ import java.util.List;
 @Setter
 public class PublishingHouseDto {
     private String name;
+    private int booksCount;
     private List<BookSimpleDto> listOfBooks;
 }
