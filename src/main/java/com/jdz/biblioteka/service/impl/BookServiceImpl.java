@@ -1,13 +1,22 @@
 package com.jdz.biblioteka.service.impl;
 
 import com.jdz.biblioteka.exception.ResourceNotFoundException;
+import com.jdz.biblioteka.model.Author;
 import com.jdz.biblioteka.model.Book;
+import com.jdz.biblioteka.model.Category;
+import com.jdz.biblioteka.model.PublishingHouse;
+import com.jdz.biblioteka.payload.AuthorDto;
 import com.jdz.biblioteka.payload.BookDto;
+import com.jdz.biblioteka.payload.BookPatchDto;
 import com.jdz.biblioteka.payload.BookResponse;
+import com.jdz.biblioteka.repository.AuthorRepository;
 import com.jdz.biblioteka.repository.BookRepository;
 import com.jdz.biblioteka.repository.CategoryRepository;
+import com.jdz.biblioteka.repository.PublishingHouseRepository;
 import com.jdz.biblioteka.service.BookService;
+import com.jdz.biblioteka.service.IsbnNumberService;
 import com.jdz.biblioteka.service.mapper.BookMapper;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,13 +25,20 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 @AllArgsConstructor
 public class BookServiceImpl implements BookService {
     private BookRepository bookRepository;
     private CategoryRepository categoryRepository;
+    private final AuthorRepository authorRepository;
+    private final PublishingHouseRepository publishingHouseRepository;
+
+    private final IsbnNumberService isbnNumberService;
+
     private final BookMapper bookMapper;
 
     @Override
@@ -32,6 +48,9 @@ public class BookServiceImpl implements BookService {
                 .findCategoryByName(bookDto.getCategory()));
 
         Book newBook = bookRepository.save(book);
+
+        isbnNumberService.createIsbnNumber(book);
+
         return bookMapper.map(newBook);
     }
 
@@ -58,6 +77,31 @@ public class BookServiceImpl implements BookService {
                 .toList(); //.collect(Collectors.toList());
 
         return bookMapper.getResponse(content, books);
+    }
+
+    @Override
+    public BookDto patchBook(int id, BookPatchDto bookPatchDto) {
+        Book book = bookRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
+
+        Author author = authorRepository.findAuthorByNameAndLastName(bookPatchDto.getName(), bookPatchDto.getLastName());
+        Category category = categoryRepository.findCategoryByName(bookPatchDto.getCategory());
+        PublishingHouse publishingHouse = publishingHouseRepository.findPublishingHouseByName(bookPatchDto.getPublishingHouse());
+
+        if (!Objects.isNull(author)) {
+            book.setAuthor(author);
+        }
+        if (!Objects.isNull(category)) {
+            book.setCategory(category);
+        }
+        if (!Objects.isNull(publishingHouse)) {
+            book.setPublishingHouse(publishingHouse);
+        }
+
+        bookRepository.save(book);
+
+        return bookMapper.map(book);
     }
 
 

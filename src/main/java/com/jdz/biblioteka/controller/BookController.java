@@ -1,8 +1,8 @@
 package com.jdz.biblioteka.controller;
 
 import com.jdz.biblioteka.payload.BookDto;
+import com.jdz.biblioteka.payload.BookPatchDto;
 import com.jdz.biblioteka.payload.BookResponse;
-import com.jdz.biblioteka.repository.BookRepository;
 import com.jdz.biblioteka.service.BookService;
 import com.jdz.biblioteka.utils.AppConstants;
 import lombok.AllArgsConstructor;
@@ -34,5 +34,10 @@ public class BookController {
             @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIR, required = false) String sortDir
     ) {
         return bookService.getAllBooks(pageNo, pageSize, sortBy, sortDir);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<BookDto> patchBook(@RequestBody BookPatchDto bookPatchDto, @PathVariable int id) {
+        return new ResponseEntity<>(bookService.patchBook(id, bookPatchDto), HttpStatus.CREATED);
     }
 }

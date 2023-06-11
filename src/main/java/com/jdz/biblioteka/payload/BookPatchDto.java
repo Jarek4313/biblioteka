@@ -5,12 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BookDto {
-    private String title;
-    private int quantity;
+public class BookPatchDto {
+    private String name;
+    private String lastName;
     private String category;
-    private int pageNumber;
-    private int publicationYear;
-    private String author;
     private String publishingHouse;
 }
