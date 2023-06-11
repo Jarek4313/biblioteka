@@ -25,9 +25,17 @@ public class IsbnNumberServiceImpl implements IsbnNumberService {
     private final IsbnNumberMapper isbnNumberMapper;
 
     @Override
+    public List<IsbnNumberDto> createIsbnNumber(Book book) {
+        return commonGenerateIsbnNumber(book);
+    }
+    @Override
     public List<IsbnNumberDto> createIsbnNumber(BookSimpleDto bookSimpleDto) {
         Book book = bookRepository.findBookByTitle(bookSimpleDto.getTitle());
 
+        return commonGenerateIsbnNumber(book);
+    }
+
+    private List<IsbnNumberDto> commonGenerateIsbnNumber(Book book) {
         if (Objects.isNull(book)) {
             return null;
         }
@@ -44,7 +52,7 @@ public class IsbnNumberServiceImpl implements IsbnNumberService {
         }
 
         for (int i=0; i<isbnNumberNeedCount; i++) {
-            IsbnNumber isbnNumber = isbnNumberMapper.map(bookSimpleDto);
+            IsbnNumber isbnNumber = isbnNumberMapper.map(book);
             isbnNumber.setIsbn(IsbnNumberUtil.generateIsbnNumber());
             IsbnNumber newIsbnNumber = isbnNumberRepository.save(isbnNumber);
             isbnNumberDtoList.add(isbnNumberMapper.map(newIsbnNumber));
@@ -52,5 +60,4 @@ public class IsbnNumberServiceImpl implements IsbnNumberService {
 
         return isbnNumberDtoList;
     }
-
 }

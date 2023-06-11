@@ -1,5 +1,6 @@
 package com.jdz.biblioteka.service.mapper;
 
+import com.jdz.biblioteka.model.Book;
 import com.jdz.biblioteka.model.IsbnNumber;
 import com.jdz.biblioteka.payload.BookSimpleDto;
 import com.jdz.biblioteka.payload.IsbnNumberDto;
@@ -48,6 +49,18 @@ public class IsbnNumberMapper {
         IsbnNumber isbnNumber = new IsbnNumber();
 
         isbnNumber.setBook(bookRepository.findBookByTitle(bookSimpleDto.getTitle()));
+
+        return isbnNumber;
+    }
+
+    public IsbnNumber map(Book book) {
+        if (Objects.isNull(book)) {
+            return null;
+        }
+
+        IsbnNumber isbnNumber = new IsbnNumber();
+
+        isbnNumber.setBook(bookRepository.findBookByTitle(book.getTitle()));
 
         return isbnNumber;
     }

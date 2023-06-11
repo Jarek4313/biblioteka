@@ -14,7 +14,9 @@ import com.jdz.biblioteka.repository.BookRepository;
 import com.jdz.biblioteka.repository.CategoryRepository;
 import com.jdz.biblioteka.repository.PublishingHouseRepository;
 import com.jdz.biblioteka.service.BookService;
+import com.jdz.biblioteka.service.IsbnNumberService;
 import com.jdz.biblioteka.service.mapper.BookMapper;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 @AllArgsConstructor
 public class BookServiceImpl implements BookService {
@@ -33,6 +36,8 @@ public class BookServiceImpl implements BookService {
     private CategoryRepository categoryRepository;
     private final AuthorRepository authorRepository;
     private final PublishingHouseRepository publishingHouseRepository;
+
+    private final IsbnNumberService isbnNumberService;
 
     private final BookMapper bookMapper;
 
@@ -43,6 +48,9 @@ public class BookServiceImpl implements BookService {
                 .findCategoryByName(bookDto.getCategory()));
 
         Book newBook = bookRepository.save(book);
+
+        isbnNumberService.createIsbnNumber(book);
+
         return bookMapper.map(newBook);
     }
 

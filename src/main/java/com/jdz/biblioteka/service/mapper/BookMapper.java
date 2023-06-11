@@ -88,7 +88,9 @@ public class BookMapper {
         BookSimpleDto bookSimpleDto = new BookSimpleDto();
 
         bookSimpleDto.setTitle(book.getTitle());
-        bookSimpleDto.setCategory(book.getCategory().getName());
+        if (Objects.nonNull(book.getCategory())) {
+            bookSimpleDto.setCategory(book.getCategory().getName());
+        }
 
         return bookSimpleDto;
     }
