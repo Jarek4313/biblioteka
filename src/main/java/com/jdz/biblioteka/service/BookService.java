@@ -13,4 +13,6 @@ public interface BookService {
     BookResponse getAllBooks(int pageNo, int pageSize, String sortBy, String sortDir);
 
     BookDto patchBook(int id, BookPatchDto authorDto);
+
+//    BookDto
 }

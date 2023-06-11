@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
@@ -16,7 +18,7 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name="title", nullable = false)
+    @Column(name="title", nullable = false, unique = true)
     private String title;
 
     @Column(name="quantity", nullable = false)
@@ -39,4 +41,7 @@ public class Book {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publishing_house_id")
     private PublishingHouse publishingHouse;
+
+    @OneToMany(mappedBy = "book")
+    private Set<IsbnNumber> isbnNumbers;
 }
